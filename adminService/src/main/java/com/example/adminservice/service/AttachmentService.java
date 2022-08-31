@@ -13,6 +13,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
@@ -20,6 +23,8 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class AttachmentService {
+    private final Path root = Paths.get("C:\\Users\\Doniyor\\IdeaProjects\\fast_food_app\\adminService\\src\\main\\resources\\upload");
+
     private final AttachmentRepository attachmentRepository;
 
     @SneakyThrows
@@ -56,6 +61,25 @@ public class AttachmentService {
                 .contentType(MediaType.valueOf(attachment.getContentType()))
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + attachment.getFileName() + "\"")
                 .body(attachment.getBytes());
+    }
+
+    @SneakyThrows
+    public ApiResponse uploadFileSystem(MultipartHttpServletRequest request) {
+
+        Iterator<String> fileNames = request.getFileNames();
+        Attachment save = null;
+        while (fileNames.hasNext()) {
+            Attachment attachment = new Attachment();
+            MultipartFile file = request.getFile(fileNames.next());
+            attachment.setFileName(file.getOriginalFilename());
+            attachment.setContentType(file.getContentType());
+            attachment.setSize(file.getSize());
+
+            Files.copy(file.getInputStream(), this.root.resolve(file.getOriginalFilename()));
+            attachment.setUrl(this.root+"\\" + file.getOriginalFilename());
+            save = attachmentRepository.save(attachment);
+        }
+        return ApiResponse.builder().success(true).message(save.getFileName() + " nomli fayl saqlandi").build();
     }
 
 }

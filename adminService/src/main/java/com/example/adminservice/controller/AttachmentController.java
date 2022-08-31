@@ -12,8 +12,13 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 @RequestMapping("/file")
 @RequiredArgsConstructor
 public class AttachmentController {
-    private final AttachmentRepository attachmentRepository;
     private final AttachmentService attachmentService;
+
+    @PostMapping("/upload")
+    public ResponseEntity<?> upload(MultipartHttpServletRequest request) {
+        ApiResponse apiResponse = attachmentService.uploadFileSystem(request);
+        return ResponseEntity.status(apiResponse.isSuccess() ? 201 : 409).body(apiResponse);
+    }
 
     //filesave DB
     @PostMapping("/uploadDB")

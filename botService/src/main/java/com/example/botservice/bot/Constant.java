@@ -60,7 +60,7 @@ public interface Constant {
     String productPriceUz="  Maxsulot narxi:";
     String quantityUz="  Tanladingiz:";
     String quantityRu="  Вы выбрали";
-    String textRu="  Вы выбрали:";
+    String textRu="  Вы выбрали";
     String textUz="  Siz tanladingiz:";
 
     String chooseQuantityUz="  Iltimos, kerakli bo’lgan miqdorni tanlang!";
@@ -135,6 +135,7 @@ public interface Constant {
     String region11="Navoiy";
     String region12="Xorazm";
     String region13="Qoraqalpog'iston";
+    String rasm="C:\\Users\\Doniyor\\IdeaProjects\\fast_food_bot_full\\src\\main\\resources\\uploads\\pepperoni-pizza.jpg";
 
 
 
