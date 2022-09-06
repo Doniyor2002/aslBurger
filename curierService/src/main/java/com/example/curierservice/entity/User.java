@@ -35,48 +35,8 @@ public class User extends AbsNameEntity {
     @ManyToOne()
     private Filial filial;
     private String region;
-    private boolean enabled = true;
-    private boolean accountExpired=true;
-    private boolean accountLocked=true;
-    private boolean credentialsExpired=true;
     @ManyToOne()
     private Role role;
-
-//    @Override
-//    public Collection<? extends GrantedAuthority> getAuthorities() {
-//
-//        return this.role.getPermissionList().stream().map(permission -> new SimpleGrantedAuthority(permission.name())).collect(Collectors.toSet());
-//    }
-//
-//    @Override
-//    public String getPassword() {
-//        return this.password;
-//    }
-//
-//    @Override
-//    public String getUsername() {
-//        return this.phone;
-//    }
-//
-//    @Override
-//    public boolean isAccountNonExpired() {
-//        return this.accountExpired;
-//    }
-//
-//    @Override
-//    public boolean isAccountNonLocked() {
-//        return this.accountLocked;
-//    }
-//
-//    @Override
-//    public boolean isCredentialsNonExpired() {
-//        return this.credentialsExpired;
-//    }
-//
-//    @Override
-//    public boolean isEnabled() {
-//        return this.enabled;
-//    }
 
     public User(String phone, Long chatId) {
         this.phone = phone;
@@ -95,10 +55,6 @@ public class User extends AbsNameEntity {
                 ", online=" + online +
                 ", filial=" + filial +
                 ", region='" + region + '\'' +
-                ", enabled=" + enabled +
-                ", accountExpired=" + accountExpired +
-                ", accountLocked=" + accountLocked +
-                ", credentialsExpired=" + credentialsExpired +
                 ", role=" + role +super.toString()+
                 '}';
     }

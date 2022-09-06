@@ -12,13 +12,9 @@ import java.util.List;
 @NoArgsConstructor
 @Data
 @Builder
-public class DiscountDto {
-
+public class ResDiscountDto {
     private String nameUz;
     private String nameRu;
-    @NotNull
     private Double percentage;
-    @NotNull
-    private List<Long> productsId;
-
+    private List<String> productsName;
 }

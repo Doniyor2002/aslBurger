@@ -16,7 +16,7 @@ public class OrderHistoryController {
     private final OrderHistoryService orderHistoryService;
 
     //OrderStatus orqali OrderHistorylarni olish
-    @GetMapping("/employeesemployees")
+    @GetMapping("/employee")
     public ResponseEntity<?> getAllByOrderStatus(@RequestParam String orderStatus){
         ApiResponse response = orderHistoryService.getAllByOrderStatus(orderStatus);
         return ResponseEntity.ok().body(response);

@@ -4,10 +4,15 @@ import com.example.adminservice.dto.AddressDto;
 import com.example.adminservice.dto.ApiResponse;
 import com.example.adminservice.service.AddressService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/address")
@@ -15,32 +20,42 @@ import javax.validation.Valid;
 public class AddressController {
     private final AddressService addressService;
 
-    //yangi address qo`shish
     @PostMapping
     public ResponseEntity<?> add(@Valid @RequestBody AddressDto addressDto){
         ApiResponse response = addressService.save(addressDto);
-        return ResponseEntity.ok().body(response);
+        return ResponseEntity.status(response.isSuccess()?201:404).body(response);
     }
 
-    //barcha Addresslarni ko`rish
     @GetMapping
-    public ResponseEntity<?> getAll(){
-        ApiResponse response = addressService.getAll();
+    public ResponseEntity<?> getAll(@RequestParam(defaultValue = "0") int page,@RequestParam(defaultValue = "10") int size){
+        ApiResponse response = addressService.getAll(page,size);
         return ResponseEntity.ok().body(response);
     }
 
-    //1 ta Adressni ko`rish (id si bo`yicha)
     @GetMapping("/{id}")
     public ResponseEntity<?> getOne(@PathVariable Long id){
-        ApiResponse one = addressService.getOne(id);
-        return ResponseEntity.ok().body(one);
+        ApiResponse apiResponse = addressService.getOne(id);
+        return ResponseEntity.status(apiResponse.isSuccess()?200:404).body(apiResponse);
     }
 
-    //Addresni o`chirib tashlash (id si bo`yicha)
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id){
         ApiResponse delete = addressService.delete(id);
-        return ResponseEntity.ok().body(delete);
+        return ResponseEntity.status(delete.isSuccess()?200:404).body(delete);
+    }
+
+
+//    Validation ishlashi uchun metod
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public Map<String, String> handleValidationExceptions(MethodArgumentNotValidException ex) {
+        Map<String, String> errors = new HashMap<>();
+        ex.getBindingResult().getAllErrors().forEach((error) -> {
+            String fieldName = ((FieldError) error).getField();
+            String errorMessage = error.getDefaultMessage();
+            errors.put(fieldName, errorMessage);
+        });
+        return errors;
     }
 
 }

@@ -8,6 +8,8 @@ import com.example.adminservice.repository.AddressRepository;
 import com.example.adminservice.repository.FilialRepository;
 import com.example.adminservice.util.DateFormatUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -45,8 +47,9 @@ public class FilialService {
         return ApiResponse.builder().success(true).message("Saved!").data(save).build();
     }
 
-    public ApiResponse getAll() {
-        List<Filial> all = filialRepository.findAll();
+    public ApiResponse getAll(int page,int size) {
+        PageRequest request = PageRequest.of(page, size);
+        Page<Filial> all = filialRepository.findAll(request);
         return ApiResponse.builder().success(true).message("Bori shu \uD83D\uDE43").data(all).build();
     }
     public ApiResponse getOne(Long id) {
@@ -87,11 +90,12 @@ public class FilialService {
     }
 
     public ApiResponse delete(Long id){
-        Optional<Filial> byId = filialRepository.findById(id);
-        if (byId.isEmpty()) {
-            return ApiResponse.builder().success(false).message("Noto`g`ri Id kiritildi").build();
+        boolean exists = filialRepository.existsById(id);
+        if (exists) {
+            filialRepository.deleteById(id);
+            return ApiResponse.builder().success(true).message("O`chirvordim \uD83D\uDEAE").build();
         }
-        filialRepository.deleteById(id);
-        return ApiResponse.builder().success(true).message("O`chirvordim \uD83D\uDEAE").build();
+        return ApiResponse.builder().success(false).message("Noto`g`ri Id kiritildi").build();
+
     }
 }

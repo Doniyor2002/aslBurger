@@ -19,12 +19,12 @@ public class ProductController {
     @PostMapping
     public ResponseEntity<?> add(@Valid @RequestBody ProductDto productDto){
         ApiResponse response = productService.add(productDto);
-        return ResponseEntity.ok().body(response);
+        return ResponseEntity.status(response.isSuccess() ? 201 : 409).body(response);
     }
 
     @GetMapping
-    public ResponseEntity<?> getAll(){
-        ApiResponse response = productService.getAll();
+    public ResponseEntity<?> getAll(@RequestParam(defaultValue = "0") int page,@RequestParam(defaultValue = "10") int size){
+        ApiResponse response = productService.getAll(page,size);
         return ResponseEntity.ok().body(response);
     }
 
@@ -37,18 +37,25 @@ public class ProductController {
     @GetMapping("/{id}")
     public ResponseEntity<?> getOne(@PathVariable Long id){
         ApiResponse one = productService.getOne(id);
-        return ResponseEntity.ok().body(one);
+        return ResponseEntity.status(one.isSuccess() ? 200 : 404).body(one);
     }
     @PutMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable Long id, @Valid @RequestBody ProductDto productDto){
         ApiResponse response = productService.update(id,productDto);
-        return ResponseEntity.ok().body(response);
+        return ResponseEntity.status(response.isSuccess() ? 200 : 404).body(response);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id){
         ApiResponse delete = productService.delete(id);
-        return ResponseEntity.ok().body(delete);
+        return ResponseEntity.status(delete.isSuccess() ? 200 : 404).body(delete);
     }
+
+    @PostMapping("/discount/{productId}")
+    public ResponseEntity<?> giveDiscountProduct(@PathVariable Long productId,@RequestParam Long discountId){
+        ApiResponse apiResponse = productService.giveDiscountProduct(productId,discountId);
+        return ResponseEntity.status(apiResponse.isSuccess() ? 200 : 404).body(apiResponse);
+    }
+
 
 }

@@ -5,20 +5,15 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 @Builder
-public class DiscountDto {
-
+public class ResCategoryDto {
     private String nameUz;
     private String nameRu;
-    @NotNull
-    private Double percentage;
-    @NotNull
-    private List<Long> productsId;
-
+    private String parentName;
+    private List<String> filialName;
 }

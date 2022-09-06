@@ -2,19 +2,24 @@ package com.example.adminservice.service;
 
 import com.example.adminservice.dto.ApiResponse;
 import com.example.adminservice.dto.NotificationDto;
-import com.example.adminservice.entity.Attachment;
-import com.example.adminservice.entity.Notification;
-import com.example.adminservice.entity.User;
+import com.example.adminservice.dto.ResDiscountDto;
+import com.example.adminservice.dto.ResNotification;
+import com.example.adminservice.entity.*;
 import com.example.adminservice.repository.AttachmentRepository;
 import com.example.adminservice.repository.NotificationRepository;
 import com.example.adminservice.repository.UserRepository;
 import com.example.adminservice.util.DateFormatUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -51,27 +56,48 @@ public class NotificationService {
         }
 
         Notification save = notificationRepository.save(notification);
-        return ApiResponse.builder().success(true).message("Saved!").data(save).build();
+        if (save!=null){
+            return ApiResponse.builder().success(true).message("Saved!").data(toDto(save)).build();
+        }
+        return ApiResponse.builder().success(false).message("Saqlashda xatolik yuz berdi!").build();
     }
 
-    public ApiResponse getAll() {
-        List<Notification> all = notificationRepository.findAll();
-        return ApiResponse.builder().success(true).message("Bori shu \uD83D\uDE43").data(all).build();
+    public ApiResponse getAll(int page,int size) {
+        PageRequest request = PageRequest.of(page, size);
+        Page<Notification> all = notificationRepository.findAll(request);
+        return ApiResponse.builder().success(true).message("Bori shu \uD83D\uDE43").data(toDtoPage(all)).build();
     }
     public ApiResponse getOne(Long id) {
         Optional<Notification> byId = notificationRepository.findById(id);
         if (byId.isEmpty()) {
             return ApiResponse.builder().success(false).message("Bunday Id lik Notification yo`q \uD83D\uDE1C").build();
         }
-        return ApiResponse.builder().success(true).message("Topildi \uD83D\uDC4C").data(byId.get()).build();
+        return ApiResponse.builder().success(true).message("Topildi \uD83D\uDC4C").data(toDto(byId.get())).build();
     }
 
     public ApiResponse delete(Long id){
-        Optional<Notification> byId = notificationRepository.findById(id);
-        if (byId.isEmpty()) {
-            return ApiResponse.builder().success(false).message("Noto`g`ri Id kiritildi \uD83D\uDE14").build();
+        boolean exists = notificationRepository.existsById(id);
+        if (exists) {
+            notificationRepository.deleteById(id);
+            return ApiResponse.builder().success(true).message("O`chirvordim \uD83D\uDEAE").build();
         }
-        notificationRepository.deleteById(id);
-        return ApiResponse.builder().success(true).message("O`chirvordim \uD83D\uDEAE").build();
+        return ApiResponse.builder().success(false).message("Noto`g`ri Id kiritildi \uD83D\uDE14").build();
+    }
+    public ResNotification toDto(Notification notification){
+        return ResNotification.builder()
+                .nameRu(notification.getNameUz())
+                .nameUz(notification.getNameUz())
+                .body(notification.getBody())
+                .attachmentId(notification.getAttachment().getId())
+                .hasBot(notification.isHasBot())
+                .sendTime(String.valueOf(notification.getSendTime()))
+                .title(notification.getTitle())
+                .userName(notification.getUser().getFullName())
+                .build();
+    }
+
+    public Page<ResNotification> toDtoPage(Page<Notification> notificationPage){
+        List<ResNotification> collect = notificationPage.stream().map(this::toDto).collect(Collectors.toList());
+        return new PageImpl<>(collect);
     }
 }

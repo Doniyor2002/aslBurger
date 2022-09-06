@@ -14,36 +14,35 @@ import javax.validation.Valid;
 @RequestMapping("/discount")
 @RequiredArgsConstructor
 public class DiscountController {
-    private final DiscountRepository discountRepository;
     private final DiscountService discountService;
 
     @PostMapping
     public ResponseEntity<?> add(@Valid @RequestBody DiscountDto discountDto){
         ApiResponse response = discountService.save(discountDto);
-        return ResponseEntity.ok().body(response);
+        return ResponseEntity.status(response.isSuccess() ? 201 : 409).body(response);
     }
     @GetMapping
-    public ResponseEntity<?> getAll(){
-        ApiResponse response = discountService.getAll();
+    public ResponseEntity<?> getAll(@RequestParam(defaultValue = "0") int page,@RequestParam(defaultValue = "10") int size){
+        ApiResponse response = discountService.getAll(page,size);
         return ResponseEntity.ok().body(response);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getOne(@PathVariable Long id){
         ApiResponse one = discountService.getOne(id);
-        return ResponseEntity.ok().body(one);
+        return ResponseEntity.status(one.isSuccess() ? 200 : 404).body(one);
     }
     @PutMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable Long id, @Valid @RequestBody DiscountDto discountDto){
         ApiResponse response = discountService.update(id,discountDto);
-        return ResponseEntity.ok().body(response);
+        return ResponseEntity.status(response.isSuccess() ? 200 : 404).body(response);
     }
 
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id){
         ApiResponse delete = discountService.delete(id);
-        return ResponseEntity.ok().body(delete);
+        return ResponseEntity.status(delete.isSuccess() ? 200 : 404).body(delete);
     }
 
 }

@@ -5,20 +5,17 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotNull;
-import java.util.List;
-
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 @Builder
-public class DiscountDto {
-
+public class ResNotification {
     private String nameUz;
     private String nameRu;
-    @NotNull
-    private Double percentage;
-    @NotNull
-    private List<Long> productsId;
-
+    private String userName;
+    private String title;
+    private String body;
+    private Long attachmentId; //attachment
+    private boolean hasBot; //true
+    private String sendTime;
 }

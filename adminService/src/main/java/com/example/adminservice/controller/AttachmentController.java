@@ -24,7 +24,7 @@ public class AttachmentController {
     @PostMapping("/uploadDB")
     public ResponseEntity<?> saveToDB(MultipartHttpServletRequest request) {
         ApiResponse response = attachmentService.uploadDB(request);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.status(response.isSuccess() ? 201 : 409).body(response);
     }
 
     @GetMapping("/downloadDB/{attachmentId}")

@@ -18,7 +18,7 @@ public class UserController {
     @PostMapping("/courier")
     public ResponseEntity<?> addCourier(@Valid @RequestBody UserDto userDto){
         ApiResponse response = userService.addCourier(userDto);
-        return ResponseEntity.ok().body(response);
+        return ResponseEntity.status(response.isSuccess() ? 201 : 409).body(response);
     }
 
     //tekshirish kerak

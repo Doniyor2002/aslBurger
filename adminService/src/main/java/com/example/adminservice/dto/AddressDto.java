@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotNull;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
@@ -12,7 +14,10 @@ import lombok.NoArgsConstructor;
 public class AddressDto {
     private String nameUz;
     private String nameRu;
+    @NotNull
     private Double lat;
+    @NotNull
     private Double lon;
+    @NotNull
     private String target;
 }

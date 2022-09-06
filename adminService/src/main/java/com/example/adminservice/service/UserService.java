@@ -34,7 +34,10 @@ public class UserService {
             user.setFilial(filial);
         }
         User save = userRepository.save(user);
-        return ApiResponse.builder().success(true).message("Courier Saved!").data(save).build();
+        if (save!=null){
+            return ApiResponse.builder().success(true).message("Courier Saved!").data(save).build();
+        }
+        return ApiResponse.builder().success(false).message("Saqlashda xatolik yuz berdi!").data(save).build();
     }
 
     public ApiResponse getAllEmployees() {
